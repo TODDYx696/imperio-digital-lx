@@ -15,9 +15,11 @@
     toggle.setAttribute("aria-expanded", String(!!open));
   });
   nav?.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeMenu));
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMenu();
+  });
   window.addEventListener("scroll", () => {
-    header?.classList.toggle("scrolled", window.scrollY > 12);
+    header?.classList.toggle("scrolled", window.scrollY > 10);
   }, { passive: true });
   document.querySelectorAll("[data-wa]").forEach((el) => {
     const key = el.getAttribute("data-wa");
@@ -27,4 +29,18 @@
   });
   const y = document.getElementById("year");
   if (y) y.textContent = String(new Date().getFullYear());
+  const reveals = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && reveals.length) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -24px 0px" });
+    reveals.forEach((el) => io.observe(el));
+  } else {
+    reveals.forEach((el) => el.classList.add("visible"));
+  }
 })();
